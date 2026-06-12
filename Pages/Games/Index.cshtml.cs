@@ -24,7 +24,10 @@ public class IndexModel(ApplicationDbContext dbContext) : PageModel
 
     public async Task OnGetAsync()
     {
-        var query = dbContext.Games.AsNoTracking().AsQueryable();
+        var query = dbContext.Games
+            .Include(game => game.Ratings)
+            .AsNoTracking()
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(SearchTerm))
         {

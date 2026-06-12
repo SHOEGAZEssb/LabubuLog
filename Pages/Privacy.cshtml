@@ -8,11 +8,11 @@
     <div>
         <p class="eyebrow">Privacy</p>
         <h1>Private by default</h1>
-        <p class="lead">Before this app goes public, add real authentication and move private settings into environment variables.</p>
+        <p class="lead">Only the two seeded accounts can access the app. Production passwords belong in environment variables.</p>
     </div>
 </section>
 
 <section class="notes-band">
-    <p><strong>MVP</strong><br />SQLite keeps the data local and easy to back up.</p>
-    <p><strong>Public launch</strong><br />Use ASP.NET Core Identity or an external provider before exposing personal notes online.</p>
+    <p><strong>Authentication</strong><br />ASP.NET Core Identity keeps each score attached to the person who entered it.</p>
+    <p><strong>Hosting</strong><br />SQLite stays simple for now, but the database file should be backed up if this becomes your real shared record.</p>
 </section>

@@ -73,6 +73,15 @@ a:hover {
     font-weight: 700;
 }
 
+.nav-user {
+    align-items: center;
+    color: #5d5750;
+    display: inline-flex;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 0 10px;
+}
+
 .app-shell {
     max-width: 1180px;
 }
@@ -93,6 +102,20 @@ a:hover {
     gap: 24px;
     justify-content: space-between;
     margin: 16px 0 24px;
+}
+
+.login-shell {
+    display: grid;
+    gap: 24px;
+    margin: 56px auto;
+    max-width: 560px;
+}
+
+.login-shell h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 0.95;
+    margin: 0;
 }
 
 .dashboard-heading h1,

@@ -21,7 +21,10 @@ public class StatsModel(ApplicationDbContext dbContext) : PageModel
 
     public async Task OnGetAsync()
     {
-        var games = await dbContext.Games.AsNoTracking().ToListAsync();
+        var games = await dbContext.Games
+            .Include(game => game.Ratings)
+            .AsNoTracking()
+            .ToListAsync();
 
         TotalGames = games.Count;
         CompletedGames = games.Count(game => game.Status == PlayStatus.Completed);

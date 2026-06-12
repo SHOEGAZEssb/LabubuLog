@@ -14,15 +14,10 @@
 <form method="post" class="edit-surface compact-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-grid">
-        <div class="form-floating">
-            <input class="form-control" asp-for="Input.YourRating" placeholder="Lebubu Score" />
-            <label asp-for="Input.YourRating"></label>
-            <span class="text-danger" asp-validation-for="Input.YourRating"></span>
-        </div>
-        <div class="form-floating">
-            <input class="form-control" asp-for="Input.PartnerRating" placeholder="Labubu Score" />
-            <label asp-for="Input.PartnerRating"></label>
-            <span class="text-danger" asp-validation-for="Input.PartnerRating"></span>
+        <div class="form-floating wide">
+            <input class="form-control" asp-for="Input.Score" placeholder="@Model.ScoreLabel" />
+            <label asp-for="Input.Score">@Model.ScoreLabel</label>
+            <span class="text-danger" asp-validation-for="Input.Score"></span>
         </div>
         <div class="form-floating wide">
             <textarea class="form-control tall-input" asp-for="Input.FavoriteMoment" placeholder="Favorite moment"></textarea>
@@ -30,9 +25,9 @@
             <span class="text-danger" asp-validation-for="Input.FavoriteMoment"></span>
         </div>
         <div class="form-floating wide">
-            <textarea class="form-control tall-input" asp-for="Input.RatingNotes" placeholder="Rating notes"></textarea>
-            <label asp-for="Input.RatingNotes"></label>
-            <span class="text-danger" asp-validation-for="Input.RatingNotes"></span>
+            <textarea class="form-control tall-input" asp-for="Input.Notes" placeholder="Notes"></textarea>
+            <label asp-for="Input.Notes"></label>
+            <span class="text-danger" asp-validation-for="Input.Notes"></span>
         </div>
     </div>
     <div class="form-actions">

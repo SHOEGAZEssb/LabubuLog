@@ -1,15 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 using LabubuLog.Data;
 using LabubuLog.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabubuLog.Pages.Games;
 
-public class RateModel(ApplicationDbContext dbContext) : PageModel
+public class RateModel(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager) : PageModel
 {
     public Game Game { get; private set; } = null!;
+
+    public string ScoreLabel { get; private set; } = "Score";
 
     [BindProperty]
     public RatingInput Input { get; set; } = new();
@@ -17,37 +20,60 @@ public class RateModel(ApplicationDbContext dbContext) : PageModel
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var game = await dbContext.Games.AsNoTracking().FirstOrDefaultAsync(game => game.Id == id);
+        var user = await userManager.GetUserAsync(User);
 
-        if (game is null)
+        if (game is null || user is null)
         {
             return NotFound();
         }
 
         Game = game;
-        Input = RatingInput.FromGame(game);
+        ScoreLabel = user.ScoreLabel;
+
+        var rating = await dbContext.GameRatings
+            .AsNoTracking()
+            .FirstOrDefaultAsync(rating => rating.GameId == game.Id && rating.UserId == user.Id);
+
+        Input = RatingInput.FromRating(rating);
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(int id)
     {
         var game = await dbContext.Games.FirstOrDefaultAsync(game => game.Id == id);
+        var user = await userManager.GetUserAsync(User);
 
-        if (game is null)
+        if (game is null || user is null)
         {
             return NotFound();
         }
 
         Game = game;
+        ScoreLabel = user.ScoreLabel;
 
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        game.YourRating = Input.YourRating;
-        game.PartnerRating = Input.PartnerRating;
-        game.FavoriteMoment = Input.FavoriteMoment;
-        game.RatingNotes = Input.RatingNotes;
+        var rating = await dbContext.GameRatings
+            .FirstOrDefaultAsync(rating => rating.GameId == game.Id && rating.UserId == user.Id);
+
+        if (rating is null)
+        {
+            rating = new GameRating
+            {
+                GameId = game.Id,
+                UserId = user.Id
+            };
+
+            dbContext.GameRatings.Add(rating);
+        }
+
+        rating.Score = Input.Score;
+        rating.FavoriteMoment = Input.FavoriteMoment;
+        rating.Notes = Input.Notes;
+        rating.RatedAtUtc = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync();
 
@@ -56,30 +82,26 @@ public class RateModel(ApplicationDbContext dbContext) : PageModel
 
     public class RatingInput
     {
-        [Display(Name = "Lebubu Score")]
+        [Required]
+        [Display(Name = "Score")]
         [Range(1, 10)]
-        public int? YourRating { get; set; }
-
-        [Display(Name = "Labubu Score")]
-        [Range(1, 10)]
-        public int? PartnerRating { get; set; }
+        public int? Score { get; set; }
 
         [Display(Name = "Favorite moment")]
         [StringLength(220)]
         public string? FavoriteMoment { get; set; }
 
-        [Display(Name = "Rating notes")]
+        [Display(Name = "Notes")]
         [StringLength(1000)]
-        public string? RatingNotes { get; set; }
+        public string? Notes { get; set; }
 
-        public static RatingInput FromGame(Game game)
+        public static RatingInput FromRating(GameRating? rating)
         {
             return new RatingInput
             {
-                YourRating = game.YourRating,
-                PartnerRating = game.PartnerRating,
-                FavoriteMoment = game.FavoriteMoment,
-                RatingNotes = game.RatingNotes
+                Score = rating?.Score,
+                FavoriteMoment = rating?.FavoriteMoment,
+                Notes = rating?.Notes
             };
         }
     }

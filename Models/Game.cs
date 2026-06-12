@@ -43,31 +43,17 @@ public class Game
     [DataType(DataType.Date)]
     public DateTime? LastPlayedOn { get; set; }
 
-    [Display(Name = "Lebubu Score")]
-    [Range(1, 10)]
-    public int? YourRating { get; set; }
-
-    [Display(Name = "Labubu Score")]
-    [Range(1, 10)]
-    public int? PartnerRating { get; set; }
-
-    [Display(Name = "Favorite moment")]
-    [StringLength(220)]
-    public string? FavoriteMoment { get; set; }
-
-    [Display(Name = "Rating notes")]
-    [StringLength(1000)]
-    public string? RatingNotes { get; set; }
-
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+
+    public List<GameRating> Ratings { get; set; } = [];
 
     public double? SharedRating
     {
         get
         {
-            var ratings = new[] { YourRating, PartnerRating }
-                .Where(rating => rating.HasValue)
-                .Select(rating => rating!.Value)
+            var ratings = Ratings
+                .Where(rating => rating.Score.HasValue)
+                .Select(rating => rating.Score!.Value)
                 .ToList();
 
             return ratings.Count == 0 ? null : Math.Round(ratings.Average(), 1);

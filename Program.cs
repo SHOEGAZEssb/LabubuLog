@@ -1,5 +1,7 @@
 using LabubuLog.Data;
+using LabubuLog.Models;
 using LabubuLog.Services.GameMetadata;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +12,31 @@ var connectionString = builder.Configuration.GetConnectionString("LabubuLog")
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 10;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.User.RequireUniqueEmail = false;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/Login";
+});
+builder.Services.AddScoped<IdentitySeedService>();
 builder.Services.AddHttpClient<IGameMetadataProvider, SteamGameMetadataProvider>();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/");
+    options.Conventions.AllowAnonymousToPage("/Account/Login");
+    options.Conventions.AllowAnonymousToPage("/Error");
+});
 
 var app = builder.Build();
 
@@ -31,6 +56,9 @@ using (var scope = app.Services.CreateScope())
     }
 
     dbContext.Database.Migrate();
+
+    var identitySeeder = scope.ServiceProvider.GetRequiredService<IdentitySeedService>();
+    await identitySeeder.SeedAsync();
 }
 
 // Configure the HTTP request pipeline.
@@ -42,6 +70,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

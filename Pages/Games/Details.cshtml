@@ -51,32 +51,34 @@
         <section class="rating-grid">
             <div class="rating-tile featured">
                 <span>Shared score</span>
-                <strong>@(Model.Game.SharedRating?.ToString("0.0") ?? "-")</strong>
+                <strong>@(Model.SharedScore?.ToString("0.0") ?? "-")</strong>
             </div>
-            <div class="rating-tile">
-                <span>Lebubu Score</span>
-                <strong>@(Model.Game.YourRating?.ToString() ?? "-")</strong>
-            </div>
-            <div class="rating-tile">
-                <span>Labubu Score</span>
-                <strong>@(Model.Game.PartnerRating?.ToString() ?? "-")</strong>
-            </div>
+            @foreach (var score in Model.Scores)
+            {
+                <div class="rating-tile">
+                    <span>@score.ScoreLabel</span>
+                    <strong>@(score.Score?.ToString() ?? "-")</strong>
+                </div>
+            }
         </section>
 
-        @if (!string.IsNullOrWhiteSpace(Model.Game.Tags) || !string.IsNullOrWhiteSpace(Model.Game.FavoriteMoment) || !string.IsNullOrWhiteSpace(Model.Game.RatingNotes))
+        @if (!string.IsNullOrWhiteSpace(Model.Game.Tags) || Model.Scores.Any(score => !string.IsNullOrWhiteSpace(score.FavoriteMoment) || !string.IsNullOrWhiteSpace(score.Notes)))
         {
             <section class="notes-band">
                 @if (!string.IsNullOrWhiteSpace(Model.Game.Tags))
                 {
                     <p><strong>Tags</strong><br />@Model.Game.Tags</p>
                 }
-                @if (!string.IsNullOrWhiteSpace(Model.Game.FavoriteMoment))
+                @foreach (var score in Model.Scores)
                 {
-                    <p><strong>Favorite moment</strong><br />@Model.Game.FavoriteMoment</p>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.Game.RatingNotes))
-                {
-                    <p><strong>Notes</strong><br />@Model.Game.RatingNotes</p>
+                    @if (!string.IsNullOrWhiteSpace(score.FavoriteMoment))
+                    {
+                        <p><strong>@score.DisplayName favorite moment</strong><br />@score.FavoriteMoment</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(score.Notes))
+                    {
+                        <p><strong>@score.DisplayName notes</strong><br />@score.Notes</p>
+                    }
                 }
             </section>
         }
