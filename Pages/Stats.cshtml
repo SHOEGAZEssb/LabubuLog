@@ -1,0 +1,80 @@
+@page
+@model LabubuLog.Pages.StatsModel
+@{
+    ViewData["Title"] = "Stats";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Stats</p>
+        <h1>Couple scoreboard</h1>
+    </div>
+</section>
+
+<section class="stat-grid" aria-label="Stats overview">
+    <div class="stat-tile">
+        <span>Total games</span>
+        <strong>@Model.TotalGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Completed</span>
+        <strong>@Model.CompletedGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Rated games</span>
+        <strong>@Model.RatedGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Average score</span>
+        <strong>@(Model.AverageSharedRating?.ToString("0.0") ?? "-")</strong>
+    </div>
+</section>
+
+<div class="dashboard-grid">
+    <section>
+        <div class="section-heading">
+            <h2>Status mix</h2>
+        </div>
+        @if (Model.StatusCounts.Count == 0)
+        {
+            <p class="muted-copy">No games yet.</p>
+        }
+        else
+        {
+            <div class="stack-list">
+                @foreach (var item in Model.StatusCounts.OrderBy(item => item.Key))
+                {
+                    <div class="game-row plain-row">
+                        <strong>@item.Key</strong>
+                        <span class="rating-pill">@item.Value</span>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <h2>Highest rated</h2>
+        </div>
+        @if (Model.TopRatedGames.Count == 0)
+        {
+            <p class="muted-copy">Top games will show up after a few ratings.</p>
+        }
+        else
+        {
+            <div class="stack-list">
+                @foreach (var game in Model.TopRatedGames)
+                {
+                    <a class="game-row" asp-page="/Games/Details" asp-route-id="@game.Id">
+                        <span>
+                            <strong>@game.Title</strong>
+                            <small>@game.Platform / @game.Status</small>
+                        </span>
+                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+</div>

@@ -1,0 +1,65 @@
+@model Game
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<fieldset class="form-section">
+    <legend>Game</legend>
+    <div class="form-grid">
+        <div class="form-floating wide">
+            <input class="form-control" asp-for="Title" placeholder="Title" />
+            <label asp-for="Title"></label>
+            <span class="text-danger" asp-validation-for="Title"></span>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" asp-for="Platform" placeholder="Platform" />
+            <label asp-for="Platform"></label>
+            <span class="text-danger" asp-validation-for="Platform"></span>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" asp-for="Genre" placeholder="Genre" />
+            <label asp-for="Genre"></label>
+            <span class="text-danger" asp-validation-for="Genre"></span>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" asp-for="ReleaseYear" placeholder="Release year" />
+            <label asp-for="ReleaseYear"></label>
+            <span class="text-danger" asp-validation-for="ReleaseYear"></span>
+        </div>
+        <div class="form-floating">
+            <select class="form-select" asp-for="Status" asp-items="Html.GetEnumSelectList<PlayStatus>()"></select>
+            <label asp-for="Status"></label>
+            <span class="text-danger" asp-validation-for="Status"></span>
+        </div>
+        <div class="form-floating wide">
+            <input class="form-control" asp-for="CoverImageUrl" placeholder="Cover image URL" />
+            <label asp-for="CoverImageUrl"></label>
+            <span class="text-danger" asp-validation-for="CoverImageUrl"></span>
+        </div>
+        <div class="form-floating wide">
+            <input class="form-control" asp-for="TitleImageUrl" placeholder="Horizontal title image URL" />
+            <label asp-for="TitleImageUrl"></label>
+            <span class="text-danger" asp-validation-for="TitleImageUrl"></span>
+        </div>
+        <div class="form-floating wide">
+            <input class="form-control" asp-for="Tags" placeholder="Tags" />
+            <label asp-for="Tags"></label>
+            <span class="text-danger" asp-validation-for="Tags"></span>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="form-section">
+    <legend>Dates</legend>
+    <div class="form-grid">
+        <div class="form-floating">
+            <input class="form-control" asp-for="FirstPlayedOn" placeholder="First played" />
+            <label asp-for="FirstPlayedOn"></label>
+            <span class="text-danger" asp-validation-for="FirstPlayedOn"></span>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" asp-for="LastPlayedOn" placeholder="Last played" />
+            <label asp-for="LastPlayedOn"></label>
+            <span class="text-danger" asp-validation-for="LastPlayedOn"></span>
+        </div>
+    </div>
+</fieldset>

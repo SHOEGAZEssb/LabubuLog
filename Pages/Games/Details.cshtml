@@ -1,0 +1,85 @@
+@page "{id:int}"
+@model LabubuLog.Pages.Games.DetailsModel
+@{
+    ViewData["Title"] = Model.Game.Title;
+}
+
+<section class="detail-layout">
+    <aside class="detail-cover">
+        <div class="cover-frame large">
+            @if (!string.IsNullOrWhiteSpace(Model.Game.CoverImageUrl))
+            {
+                <img src="@Model.Game.CoverImageUrl" alt="@Model.Game.Title cover" />
+            }
+            else
+            {
+                <span>@Model.Game.Title[0]</span>
+            }
+        </div>
+    </aside>
+    <div class="detail-content">
+        <div class="page-heading detail-heading">
+            <div>
+                <p class="eyebrow">@Model.Game.Status</p>
+                <h1>@Model.Game.Title</h1>
+                <p class="lead">
+                    @Model.Game.Platform
+                    @if (!string.IsNullOrWhiteSpace(Model.Game.Genre))
+                    {
+                        <span>/ @Model.Game.Genre</span>
+                    }
+                    @if (Model.Game.ReleaseYear.HasValue)
+                    {
+                        <span>/ @Model.Game.ReleaseYear</span>
+                    }
+                </p>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-primary" asp-page="Rate" asp-route-id="@Model.Game.Id">Rate</a>
+                <a class="btn btn-outline-secondary" asp-page="Edit" asp-route-id="@Model.Game.Id">Edit metadata</a>
+                <a class="btn btn-outline-danger" asp-page="Delete" asp-route-id="@Model.Game.Id">Delete</a>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Game.TitleImageUrl))
+        {
+            <section class="title-image-frame" aria-label="@Model.Game.Title title image">
+                <img src="@Model.Game.TitleImageUrl" alt="@Model.Game.Title title image" />
+            </section>
+        }
+
+        <section class="rating-grid">
+            <div class="rating-tile featured">
+                <span>Shared score</span>
+                <strong>@(Model.Game.SharedRating?.ToString("0.0") ?? "-")</strong>
+            </div>
+            <div class="rating-tile">
+                <span>Lebubu Score</span>
+                <strong>@(Model.Game.YourRating?.ToString() ?? "-")</strong>
+            </div>
+            <div class="rating-tile">
+                <span>Labubu Score</span>
+                <strong>@(Model.Game.PartnerRating?.ToString() ?? "-")</strong>
+            </div>
+        </section>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Game.Tags) || !string.IsNullOrWhiteSpace(Model.Game.FavoriteMoment) || !string.IsNullOrWhiteSpace(Model.Game.RatingNotes))
+        {
+            <section class="notes-band">
+                @if (!string.IsNullOrWhiteSpace(Model.Game.Tags))
+                {
+                    <p><strong>Tags</strong><br />@Model.Game.Tags</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Game.FavoriteMoment))
+                {
+                    <p><strong>Favorite moment</strong><br />@Model.Game.FavoriteMoment</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Game.RatingNotes))
+                {
+                    <p><strong>Notes</strong><br />@Model.Game.RatingNotes</p>
+                }
+            </section>
+        }
+
+    </div>
+</section>

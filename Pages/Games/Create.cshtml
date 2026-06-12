@@ -1,0 +1,31 @@
+@page
+@model LabubuLog.Pages.Games.CreateModel
+@{
+    ViewData["Title"] = "Add game";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">New entry</p>
+        <h1>Add a game</h1>
+        <p class="lead">Start with the shelf details. Ratings can be added together after the game exists.</p>
+    </div>
+    <a class="btn btn-outline-primary" asp-page="Lookup">Find metadata</a>
+</section>
+
+@if (TempData["LookupApplied"] is string lookupApplied)
+{
+    <div class="alert alert-success">@lookupApplied</div>
+}
+
+<form method="post" class="edit-surface">
+    <partial name="_GameForm" for="Game" />
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save game</button>
+        <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

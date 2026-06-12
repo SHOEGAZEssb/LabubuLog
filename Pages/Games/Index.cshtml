@@ -1,0 +1,84 @@
+@page
+@model LabubuLog.Pages.Games.IndexModel
+@{
+    ViewData["Title"] = "Library";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Library</p>
+        <h1>Game shelf</h1>
+    </div>
+    <a class="btn btn-primary" asp-page="Lookup">Add game</a>
+</section>
+
+<form method="get" class="filter-bar">
+    <div class="form-floating">
+        <input class="form-control" asp-for="SearchTerm" placeholder="Search" />
+        <label asp-for="SearchTerm">Search</label>
+    </div>
+    <div class="form-floating">
+        <select class="form-select" asp-for="StatusFilter" asp-items="Model.StatusOptions">
+            <option value="">All statuses</option>
+        </select>
+        <label asp-for="StatusFilter">Status</label>
+    </div>
+    <div class="form-floating">
+        <select class="form-select" asp-for="SortBy">
+            <option value="recent">Recently played</option>
+            <option value="rating">Highest rated</option>
+            <option value="title">Title</option>
+            <option value="status">Status</option>
+        </select>
+        <label asp-for="SortBy">Sort</label>
+    </div>
+    <button class="btn btn-outline-secondary" type="submit">Apply</button>
+</form>
+
+@if (Model.Games.Count == 0)
+{
+    <section class="empty-state">
+        <h2>No games found</h2>
+        <p>The shelf is ready when you are.</p>
+        <a class="btn btn-primary" asp-page="Lookup">Add game</a>
+    </section>
+}
+else
+{
+    <section class="game-grid" aria-label="Games">
+        @foreach (var game in Model.Games)
+        {
+            <article class="game-card">
+                <a class="cover-frame" asp-page="Details" asp-route-id="@game.Id">
+                    @if (!string.IsNullOrWhiteSpace(game.CoverImageUrl))
+                    {
+                        <img src="@game.CoverImageUrl" alt="@game.Title cover" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span>@game.Title[0]</span>
+                    }
+                </a>
+                <div class="game-card-body">
+                    <div>
+                        <span class="status-badge">@game.Status</span>
+                        <h2><a asp-page="Details" asp-route-id="@game.Id">@game.Title</a></h2>
+                        <p>@game.Platform @if (!string.IsNullOrWhiteSpace(game.Genre)) { <span>/ @game.Genre</span> }</p>
+                    </div>
+                    <div class="game-meta-row">
+                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                        <span>@(game.LastPlayedOn?.ToString("MMM d, yyyy") ?? "No date set")</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(game.Tags))
+                    {
+                        <p class="tag-line">@game.Tags</p>
+                    }
+                    <div class="button-row">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="Rate" asp-route-id="@game.Id">Rate</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-page="Edit" asp-route-id="@game.Id">Edit</a>
+                    </div>
+                </div>
+            </article>
+        }
+    </section>
+}

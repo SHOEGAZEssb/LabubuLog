@@ -1,0 +1,72 @@
+@page
+@model LabubuLog.Pages.Games.LookupModel
+@{
+    ViewData["Title"] = "Find metadata";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Metadata lookup</p>
+        <h1>Find a game</h1>
+        <p class="lead">Search Steam, pick the closest match, then review the imported details before saving.</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="Create">Add manually</a>
+</section>
+
+@if (TempData["LookupError"] is string lookupError)
+{
+    <div class="alert alert-danger">@lookupError</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="get" class="lookup-search">
+    <div class="form-floating">
+        <input class="form-control" asp-for="SearchTerm" placeholder="Game title" autofocus />
+        <label asp-for="SearchTerm">Game title</label>
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && Model.Results.Count == 0 && string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <section class="empty-state">
+        <h2>No matches found</h2>
+        <p>Try a shorter title or add the game manually.</p>
+        <a class="btn btn-outline-secondary" asp-page="Create">Add manually</a>
+    </section>
+}
+
+@if (Model.Results.Count > 0)
+{
+    <section class="lookup-results" aria-label="Metadata results">
+        @foreach (var result in Model.Results)
+        {
+            <article class="lookup-result">
+                <div class="lookup-art">
+                    @if (!string.IsNullOrWhiteSpace(result.ThumbnailUrl))
+                    {
+                        <img src="@result.ThumbnailUrl" alt="@result.Title thumbnail" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span>@result.Title[0]</span>
+                    }
+                </div>
+                <div>
+                    <p class="eyebrow">@result.Provider</p>
+                    <h2>@result.Title</h2>
+                    <p>@(result.Platforms ?? "Platform details unavailable")</p>
+                </div>
+                <form method="post" asp-page-handler="Use" class="lookup-action">
+                    <input type="hidden" name="providerId" value="@result.ProviderId" />
+                    <input type="hidden" asp-for="SearchTerm" />
+                    <button class="btn btn-primary" type="submit">Use metadata</button>
+                </form>
+            </article>
+        }
+    </section>
+}

@@ -1,0 +1,15 @@
+@page "{id:int}/delete"
+@model LabubuLog.Pages.Games.DeleteModel
+@{
+    ViewData["Title"] = "Delete game";
+}
+
+<section class="empty-state danger-zone">
+    <p class="eyebrow">Delete</p>
+    <h1>@Model.Game.Title</h1>
+    <p>This removes the game and every logged session for it.</p>
+    <form method="post" class="form-actions centered">
+        <button class="btn btn-danger" type="submit">Delete game</button>
+        <a class="btn btn-outline-secondary" asp-page="Details" asp-route-id="@Model.Game.Id">Cancel</a>
+    </form>
+</section>

@@ -1,0 +1,26 @@
+@page "{id:int}"
+@model LabubuLog.Pages.Games.EditModel
+@{
+    ViewData["Title"] = "Edit game";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Metadata</p>
+        <h1>Edit @Model.Game.Title</h1>
+    </div>
+</section>
+
+<form method="post" class="edit-surface">
+    <input type="hidden" asp-for="Game.Id" />
+    <input type="hidden" asp-for="Game.CreatedAtUtc" />
+    <partial name="_GameForm" for="Game" />
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save changes</button>
+        <a class="btn btn-outline-secondary" asp-page="Details" asp-route-id="@Model.Game.Id">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

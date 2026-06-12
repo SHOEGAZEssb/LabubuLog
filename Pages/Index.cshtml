@@ -1,0 +1,101 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="dashboard-heading">
+    <div>
+        <p class="eyebrow">Shared library</p>
+        <h1>Games you played together</h1>
+        <p class="lead">A small home for scores, sessions, favorite moments, and the games you have shared.</p>
+    </div>
+    <div class="heading-actions">
+        <a class="btn btn-primary" asp-page="/Games/Lookup">Add game</a>
+        <a class="btn btn-outline-secondary" asp-page="/Games/Index">Browse library</a>
+    </div>
+</section>
+
+<section class="stat-grid" aria-label="Library overview">
+    <div class="stat-tile">
+        <span>Total games</span>
+        <strong>@Model.TotalGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Completed</span>
+        <strong>@Model.CompletedGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Rated games</span>
+        <strong>@Model.RatedGames</strong>
+    </div>
+    <div class="stat-tile">
+        <span>Average score</span>
+        <strong>@(Model.AverageSharedRating?.ToString("0.0") ?? "-")</strong>
+    </div>
+</section>
+
+@if (Model.TotalGames == 0)
+{
+    <section class="empty-state">
+        <h2>Start with the first game</h2>
+        <p>Add a title, give it both scores, and keep the notes you will want to find again later.</p>
+        <a class="btn btn-primary" asp-page="/Games/Lookup">Add your first game</a>
+    </section>
+}
+else
+{
+    <div class="dashboard-grid">
+        <section>
+            <div class="section-heading">
+                <h2>Recently played</h2>
+                <a asp-page="/Games/Index">View all</a>
+            </div>
+            <div class="stack-list">
+                @foreach (var game in Model.RecentGames)
+                {
+                    <a class="game-row" asp-page="/Games/Details" asp-route-id="@game.Id">
+                        <span class="cover-thumb">
+                            @if (!string.IsNullOrWhiteSpace(game.CoverImageUrl))
+                            {
+                                <img src="@game.CoverImageUrl" alt="@game.Title cover" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span>@game.Title[0]</span>
+                            }
+                        </span>
+                        <span>
+                            <strong>@game.Title</strong>
+                            <small>@game.Platform / @game.Status</small>
+                        </span>
+                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                    </a>
+                }
+            </div>
+        </section>
+
+        <section>
+            <div class="section-heading">
+                <h2>Highest rated</h2>
+                <a asp-page="/Stats">Stats</a>
+            </div>
+            <div class="stack-list">
+                @foreach (var game in Model.TopGames)
+                {
+                    <a class="game-row" asp-page="/Games/Details" asp-route-id="@game.Id">
+                        <span>
+                            <strong>@game.Title</strong>
+                            <small>@game.Genre / @game.Tags</small>
+                        </span>
+                        <span class="rating-pill rating-pill-hot">@game.SharedRating?.ToString("0.0")</span>
+                    </a>
+                }
+                @if (Model.TopGames.Count == 0)
+                {
+                    <p class="muted-copy">Ratings will show up here once both scores land.</p>
+                }
+            </div>
+        </section>
+    </div>
+}
