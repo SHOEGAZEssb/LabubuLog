@@ -1,10 +1,23 @@
-name: Deploy to MonsterASP.NET
+name: Build and deploy to MonsterASP.NET
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: monsterasp-production
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: windows-latest
 
     steps:
@@ -19,10 +32,14 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      - name: Build
+        run: dotnet build LabubuLog.csproj --configuration Release --no-restore
+
       - name: Publish
         run: dotnet publish LabubuLog.csproj --configuration Release --output ./publish --runtime win-x86 --self-contained false
 
       - name: Deploy via WebDeploy
+        if: github.event_name != 'pull_request'
         uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
           website-name: ${{ secrets.MONSTERASP_WEBSITE_NAME }}

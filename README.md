@@ -58,7 +58,7 @@ SeedUsers__LabubuPassword=<strong password>
 
 The first production start creates the SQL Server schema automatically, then seeds the two private users with the passwords above. Keep these values out of source control.
 
-### Deploy With GitHub Actions
+### Continuous Deployment With GitHub Actions
 
 Activate WebDeploy for the site in the MonsterASP.NET control panel. Add these GitHub repository secrets from the WebDeploy details:
 
@@ -69,7 +69,7 @@ MONSTERASP_USERNAME=siteXXXXX
 MONSTERASP_PASSWORD=<webdeploy password>
 ```
 
-Then run the manual `Deploy to MonsterASP.NET` workflow from the GitHub Actions tab.
+The `Build and deploy to MonsterASP.NET` workflow deploys automatically after every push to `main`. Pull requests only build and publish-check the app; they do not deploy. You can also run the workflow manually from the GitHub Actions tab.
 
 ### Deploy From Visual Studio
 
