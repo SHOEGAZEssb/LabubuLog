@@ -5,7 +5,7 @@ A private Razor Pages app for logging and rating games played together.
 ## Current MVP
 
 - ASP.NET Core Razor Pages on .NET 8 LTS
-- EF Core with SQLite
+- EF Core with SQLite locally and SQL Server support for MonsterASP.NET
 - ASP.NET Core Identity with two seeded accounts
 - Game library with search, status filter, and sorting
 - Steam metadata lookup before manual entry
@@ -36,22 +36,47 @@ SeedUsers__LebubuPassword
 SeedUsers__LabubuPassword
 ```
 
-## Free Azure Hosting
+## MonsterASP.NET Hosting
 
-Use Azure App Service Free F1 for the app. `appsettings.Production.json` stores SQLite at `/home/data/labubulog.db`, which is the persistent home storage path on Azure App Service for Linux.
+MonsterASP.NET is the current free hosting target for the MVP. Production is configured to use SQL Server because MonsterASP.NET includes managed MSSQL/MySQL databases and supports ASP.NET Core/.NET 8.
 
-Required Azure app settings:
+Create a website and an MSSQL database in the MonsterASP.NET control panel. Then add these environment variables under:
+
+```text
+Websites -> Manage website -> Scripting -> Environment Variables
+```
+
+Required production variables:
 
 ```text
 ASPNETCORE_ENVIRONMENT=Production
+DatabaseProvider=SqlServer
+ConnectionStrings__LabubuLog=<MonsterASP MSSQL connection string>
 SeedUsers__LebubuPassword=<strong password>
 SeedUsers__LabubuPassword=<strong password>
 ```
 
-Optional override if you move the database:
+The first production start creates the SQL Server schema automatically, then seeds the two private users with the passwords above. Keep these values out of source control.
+
+### Deploy With GitHub Actions
+
+Activate WebDeploy for the site in the MonsterASP.NET control panel. Add these GitHub repository secrets from the WebDeploy details:
 
 ```text
-ConnectionStrings__LabubuLog=Data Source=/home/data/labubulog.db
+MONSTERASP_WEBSITE_NAME=siteXXXXX
+MONSTERASP_SERVER_COMPUTER_NAME=https://siteXXXXX.siteasp.net:8172
+MONSTERASP_USERNAME=siteXXXXX
+MONSTERASP_PASSWORD=<webdeploy password>
 ```
+
+Then run the manual `Deploy to MonsterASP.NET` workflow from the GitHub Actions tab.
+
+### Deploy From Visual Studio
+
+You can also publish from Visual Studio by importing the MonsterASP.NET WebDeploy publish profile. Make sure the environment variables above are set in the MonsterASP.NET control panel before opening the site.
+
+### HTTPS
+
+Enable Let's Encrypt for the MonsterASP.NET domain in `Domains/HTTPS`. On the free plan, renew the certificate manually every 90 days.
 
 The current metadata lookup uses Steam as a no-key MVP provider. For broader console and non-Steam coverage, add a second provider such as RAWG behind `IGameMetadataProvider` and configure its API key through environment variables.

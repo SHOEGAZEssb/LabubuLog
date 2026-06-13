@@ -14,9 +14,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Game>()
-            .Property(game => game.Title)
-            .UseCollation("NOCASE");
+        var titleProperty = modelBuilder.Entity<Game>()
+            .Property(game => game.Title);
+
+        if (Database.IsSqlite())
+        {
+            titleProperty.UseCollation("NOCASE");
+        }
 
         modelBuilder.Entity<GameRating>()
             .HasIndex(rating => new { rating.GameId, rating.UserId })

@@ -7,11 +7,25 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("LabubuLog")
-    ?? "Data Source=Data/labubulog.db";
+var databaseProvider = ResolveDatabaseProvider(builder.Configuration);
+var connectionString = ResolveConnectionString(builder.Configuration, databaseProvider);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+{
+    if (IsSqlServer(databaseProvider))
+    {
+        options.UseSqlServer(connectionString);
+        return;
+    }
+
+    if (IsSqlite(databaseProvider))
+    {
+        options.UseSqlite(connectionString);
+        return;
+    }
+
+    throw new InvalidOperationException($"Unsupported database provider '{databaseProvider}'. Use 'Sqlite' or 'SqlServer'.");
+});
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 10;
@@ -43,19 +57,27 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var connection = dbContext.Database.GetDbConnection();
 
-    if (!string.IsNullOrWhiteSpace(connection.DataSource))
+    if (dbContext.Database.IsSqlite())
     {
-        var databaseDirectory = Path.GetDirectoryName(Path.GetFullPath(connection.DataSource));
+        var connection = dbContext.Database.GetDbConnection();
 
-        if (!string.IsNullOrWhiteSpace(databaseDirectory))
+        if (!string.IsNullOrWhiteSpace(connection.DataSource))
         {
-            Directory.CreateDirectory(databaseDirectory);
-        }
-    }
+            var databaseDirectory = Path.GetDirectoryName(Path.GetFullPath(connection.DataSource));
 
-    dbContext.Database.Migrate();
+            if (!string.IsNullOrWhiteSpace(databaseDirectory))
+            {
+                Directory.CreateDirectory(databaseDirectory);
+            }
+        }
+
+        dbContext.Database.Migrate();
+    }
+    else
+    {
+        dbContext.Database.EnsureCreated();
+    }
 
     var identitySeeder = scope.ServiceProvider.GetRequiredService<IdentitySeedService>();
     await identitySeeder.SeedAsync();
@@ -76,3 +98,59 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+static string ResolveDatabaseProvider(IConfiguration configuration)
+{
+    var configuredProvider = configuration["DatabaseProvider"];
+
+    if (!string.IsNullOrWhiteSpace(configuredProvider))
+    {
+        return configuredProvider.Trim();
+    }
+
+    var connectionString = configuration.GetConnectionString("LabubuLog");
+
+    if (LooksLikeSqlServer(connectionString))
+    {
+        return "SqlServer";
+    }
+
+    return "Sqlite";
+}
+
+static string ResolveConnectionString(IConfiguration configuration, string databaseProvider)
+{
+    var connectionString = configuration.GetConnectionString("LabubuLog");
+
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        return connectionString;
+    }
+
+    if (IsSqlServer(databaseProvider))
+    {
+        throw new InvalidOperationException("Missing SQL Server connection string. Set ConnectionStrings__LabubuLog in the hosting environment.");
+    }
+
+    return "Data Source=Data/labubulog.db";
+}
+
+static bool LooksLikeSqlServer(string? connectionString)
+{
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        return false;
+    }
+
+    return connectionString.Contains("Initial Catalog=", StringComparison.OrdinalIgnoreCase)
+        || connectionString.Contains("User ID=", StringComparison.OrdinalIgnoreCase)
+        || connectionString.Contains("User Id=", StringComparison.OrdinalIgnoreCase)
+        || connectionString.Contains("Trusted_Connection=", StringComparison.OrdinalIgnoreCase)
+        || connectionString.Contains("TrustServerCertificate=", StringComparison.OrdinalIgnoreCase);
+}
+
+static bool IsSqlite(string databaseProvider) =>
+    string.Equals(databaseProvider, "Sqlite", StringComparison.OrdinalIgnoreCase);
+
+static bool IsSqlServer(string databaseProvider) =>
+    string.Equals(databaseProvider, "SqlServer", StringComparison.OrdinalIgnoreCase);
