@@ -71,7 +71,7 @@
                             <strong>@game.Title</strong>
                             <small>@game.Platform / @game.Status</small>
                         </span>
-                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                        <span class="rating-pill score-pill" style="@ScoreDisplay.HueStyle(game.SharedRating)">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
                     </a>
                 }
             </div>

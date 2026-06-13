@@ -22,10 +22,16 @@ public class IndexModel(ApplicationDbContext dbContext) : PageModel
 
     public SelectList StatusOptions { get; private set; } = new(Enum.GetValues<PlayStatus>());
 
+    public static IEnumerable<GameRating> RatingsWithText(Game game) =>
+        game.Ratings.Where(rating =>
+            !string.IsNullOrWhiteSpace(rating.FavoriteMoment) ||
+            !string.IsNullOrWhiteSpace(rating.Notes));
+
     public async Task OnGetAsync()
     {
         var query = dbContext.Games
             .Include(game => game.Ratings)
+            .ThenInclude(rating => rating.User)
             .AsNoTracking()
             .AsQueryable();
 
@@ -51,7 +57,7 @@ public class IndexModel(ApplicationDbContext dbContext) : PageModel
             "title" => games.OrderBy(game => game.Title).ToList(),
             "rating" => games.OrderByDescending(game => game.SharedRating ?? 0).ThenBy(game => game.Title).ToList(),
             "status" => games.OrderBy(game => game.Status).ThenBy(game => game.Title).ToList(),
-            _ => games.OrderByDescending(game => game.LastPlayedOn ?? game.FirstPlayedOn ?? game.CreatedAtUtc).ToList()
+            _ => games.OrderByDescending(game => game.CreatedAtUtc).ToList()
         };
     }
 }

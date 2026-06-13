@@ -10,11 +10,7 @@ namespace LabubuLog.Pages.Games;
 public class CreateModel(ApplicationDbContext dbContext) : PageModel
 {
     [BindProperty]
-    public Game Game { get; set; } = new()
-    {
-        FirstPlayedOn = DateTime.Today,
-        LastPlayedOn = DateTime.Today
-    };
+    public Game Game { get; set; } = new();
 
     public void OnGet()
     {
@@ -34,9 +30,7 @@ public class CreateModel(ApplicationDbContext dbContext) : PageModel
             CoverImageUrl = draft.CoverImageUrl,
             TitleImageUrl = draft.TitleImageUrl,
             Tags = draft.Tags,
-            Status = PlayStatus.Playing,
-            FirstPlayedOn = DateTime.Today,
-            LastPlayedOn = DateTime.Today
+            Status = PlayStatus.Playing
         };
 
         TempData["LookupApplied"] = $"Metadata imported from {draft.Provider}.";
@@ -50,11 +44,6 @@ public class CreateModel(ApplicationDbContext dbContext) : PageModel
         }
 
         Game.CreatedAtUtc = DateTime.UtcNow;
-
-        if (Game.LastPlayedOn is null)
-        {
-            Game.LastPlayedOn = Game.FirstPlayedOn;
-        }
 
         dbContext.Games.Add(Game);
         await dbContext.SaveChangesAsync();

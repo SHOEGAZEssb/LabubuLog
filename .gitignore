@@ -12,6 +12,9 @@ Data/*.db-wal
 # dotenv files
 .env
 
+# EF migration files are local while the project is still moving quickly.
+/Migrations
+
 # User-specific files
 *.rsuser
 *.suo
@@ -488,4 +491,3 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-/Migrations

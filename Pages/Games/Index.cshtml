@@ -25,7 +25,7 @@
     </div>
     <div class="form-floating">
         <select class="form-select" asp-for="SortBy">
-            <option value="recent">Recently played</option>
+            <option value="recent">Recently added</option>
             <option value="rating">Highest rated</option>
             <option value="title">Title</option>
             <option value="status">Status</option>
@@ -48,6 +48,7 @@ else
     <section class="game-grid" aria-label="Games">
         @foreach (var game in Model.Games)
         {
+            var ratingsWithText = IndexModel.RatingsWithText(game).ToList();
             <article class="game-card">
                 <a class="cover-frame" asp-page="Details" asp-route-id="@game.Id">
                     @if (!string.IsNullOrWhiteSpace(game.CoverImageUrl))
@@ -66,12 +67,28 @@ else
                         <p>@game.Platform @if (!string.IsNullOrWhiteSpace(game.Genre)) { <span>/ @game.Genre</span> }</p>
                     </div>
                     <div class="game-meta-row">
-                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
-                        <span>@(game.LastPlayedOn?.ToString("MMM d, yyyy") ?? "No date set")</span>
+                        <span class="rating-pill score-pill" style="@ScoreDisplay.HueStyle(game.SharedRating)">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                        <span>@game.CreatedAtUtc.ToString("MMM d, yyyy")</span>
                     </div>
                     @if (!string.IsNullOrWhiteSpace(game.Tags))
                     {
                         <p class="tag-line">@game.Tags</p>
+                    }
+                    @if (ratingsWithText.Count > 0)
+                    {
+                        <div class="rating-notes-preview">
+                            @foreach (var rating in ratingsWithText.Take(2))
+                            {
+                                @if (!string.IsNullOrWhiteSpace(rating.FavoriteMoment))
+                                {
+                                    <p><strong>@rating.User.DisplayName moment</strong><br />@rating.FavoriteMoment</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(rating.Notes))
+                                {
+                                    <p><strong>@rating.User.DisplayName notes</strong><br />@rating.Notes</p>
+                                }
+                            }
+                        </div>
                     }
                     <div class="button-row">
                         <a class="btn btn-sm btn-outline-primary" asp-page="Rate" asp-route-id="@game.Id">Rate</a>

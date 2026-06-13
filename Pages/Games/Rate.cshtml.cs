@@ -85,7 +85,7 @@ public class RateModel(ApplicationDbContext dbContext, UserManager<ApplicationUs
         [Required]
         [Display(Name = "Score")]
         [Range(1, 10)]
-        public int? Score { get; set; }
+        public int? Score { get; set; } = 5;
 
         [Display(Name = "Favorite moment")]
         [StringLength(220)]
@@ -99,7 +99,7 @@ public class RateModel(ApplicationDbContext dbContext, UserManager<ApplicationUs
         {
             return new RatingInput
             {
-                Score = rating?.Score,
+                Score = rating?.Score ?? 5,
                 FavoriteMoment = rating?.FavoriteMoment,
                 Notes = rating?.Notes
             };

@@ -8,7 +8,7 @@
     <div>
         <p class="eyebrow">Shared library</p>
         <h1>Games you played together</h1>
-        <p class="lead">A small home for scores, sessions, favorite moments, and the games you have shared.</p>
+        <p class="lead">A small home for scores, favorite moments, notes, and the games you have shared.</p>
     </div>
     <div class="heading-actions">
         <a class="btn btn-primary" asp-page="/Games/Lookup">Add game</a>
@@ -48,7 +48,7 @@ else
     <div class="dashboard-grid">
         <section>
             <div class="section-heading">
-                <h2>Recently played</h2>
+                <h2>Recently added</h2>
                 <a asp-page="/Games/Index">View all</a>
             </div>
             <div class="stack-list">
@@ -69,7 +69,7 @@ else
                             <strong>@game.Title</strong>
                             <small>@game.Platform / @game.Status</small>
                         </span>
-                        <span class="rating-pill">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                        <span class="rating-pill score-pill" style="@ScoreDisplay.HueStyle(game.SharedRating)">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
                     </a>
                 }
             </div>
@@ -88,7 +88,7 @@ else
                             <strong>@game.Title</strong>
                             <small>@game.Genre / @game.Tags</small>
                         </span>
-                        <span class="rating-pill rating-pill-hot">@game.SharedRating?.ToString("0.0")</span>
+                        <span class="rating-pill score-pill" style="@ScoreDisplay.HueStyle(game.SharedRating)">@game.SharedRating?.ToString("0.0")</span>
                     </a>
                 }
                 @if (Model.TopGames.Count == 0)

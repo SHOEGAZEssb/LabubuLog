@@ -268,6 +268,18 @@ a:hover {
     padding: 4px 10px;
 }
 
+.score-pill[style*="--score-hue"],
+.score-tile[style*="--score-hue"] {
+    background: hsl(calc(var(--score-hue) * 1deg) 72% 90%);
+    border-color: hsl(calc(var(--score-hue) * 1deg) 56% 72%);
+    color: hsl(calc(var(--score-hue) * 1deg) 62% 24%);
+}
+
+.score-tile[style*="--score-hue"] span,
+.score-tile[style*="--score-hue"] strong {
+    color: hsl(calc(var(--score-hue) * 1deg) 62% 20%);
+}
+
 .rating-pill-hot {
     background: #fff0df;
     border-color: #e3bd8b;
@@ -423,6 +435,26 @@ a:hover {
     margin: 0;
 }
 
+.rating-notes-preview {
+    border-top: 1px solid #eee6da;
+    color: #5f574f;
+    display: grid;
+    font-size: 0.9rem;
+    gap: 8px;
+    padding-top: 12px;
+}
+
+.rating-notes-preview p {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.rating-notes-preview strong {
+    color: #22211f;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+}
+
 .edit-surface {
     display: grid;
     gap: 24px;
@@ -485,11 +517,17 @@ a:hover {
     margin-top: 0;
 }
 
-.rating-grid {
+.rating-detail-grid {
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     margin-bottom: 22px;
+}
+
+.rating-column {
+    align-content: start;
+    display: grid;
+    gap: 12px;
 }
 
 .title-image-frame {
@@ -510,17 +548,6 @@ a:hover {
     width: 100%;
 }
 
-.rating-tile.featured {
-    background: #22211f;
-    border-color: #22211f;
-    color: #fffdf9;
-}
-
-.rating-tile.featured span,
-.rating-tile.featured strong {
-    color: #fffdf9;
-}
-
 .notes-band {
     display: grid;
     gap: 16px;
@@ -529,6 +556,32 @@ a:hover {
 
 .notes-band p {
     margin: 0;
+}
+
+.rating-note-card {
+    background: #fffdf9;
+    border: 1px solid #e5ded2;
+    border-radius: 8px;
+    display: grid;
+    gap: 12px;
+    min-height: 150px;
+    padding: 22px;
+}
+
+.rating-note-card h2 {
+    font-size: 1rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.rating-note-card p {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.rating-note-card strong {
+    color: #6e675d;
+    font-size: 0.82rem;
 }
 
 .danger-zone {
@@ -553,7 +606,7 @@ a:hover {
     .stat-grid,
     .dashboard-grid,
     .game-grid,
-    .rating-grid,
+    .rating-detail-grid,
     .detail-layout {
         grid-template-columns: 1fr;
     }

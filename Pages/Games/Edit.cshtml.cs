@@ -45,8 +45,6 @@ public class EditModel(ApplicationDbContext dbContext) : PageModel
         game.TitleImageUrl = Game.TitleImageUrl;
         game.Tags = Game.Tags;
         game.Status = Game.Status;
-        game.FirstPlayedOn = Game.FirstPlayedOn;
-        game.LastPlayedOn = Game.LastPlayedOn;
 
         await dbContext.SaveChangesAsync();
 

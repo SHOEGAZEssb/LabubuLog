@@ -35,14 +35,6 @@ public class Game
 
     public PlayStatus Status { get; set; } = PlayStatus.Playing;
 
-    [Display(Name = "First played")]
-    [DataType(DataType.Date)]
-    public DateTime? FirstPlayedOn { get; set; }
-
-    [Display(Name = "Last played")]
-    [DataType(DataType.Date)]
-    public DateTime? LastPlayedOn { get; set; }
-
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public List<GameRating> Ratings { get; set; } = [];

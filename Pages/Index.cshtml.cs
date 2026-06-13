@@ -39,7 +39,7 @@ public class IndexModel(ApplicationDbContext dbContext) : PageModel
         AverageSharedRating = sharedRatings.Count == 0 ? null : Math.Round(sharedRatings.Average(), 1);
 
         RecentGames = games
-            .OrderByDescending(game => game.LastPlayedOn ?? game.FirstPlayedOn ?? game.CreatedAtUtc)
+            .OrderByDescending(game => game.CreatedAtUtc)
             .Take(5)
             .ToList();
 

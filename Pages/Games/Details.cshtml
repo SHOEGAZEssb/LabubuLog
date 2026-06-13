@@ -48,38 +48,39 @@
             </section>
         }
 
-        <section class="rating-grid">
-            <div class="rating-tile featured">
-                <span>Shared score</span>
-                <strong>@(Model.SharedScore?.ToString("0.0") ?? "-")</strong>
+        <section class="rating-detail-grid">
+            <div class="rating-column">
+                <div class="rating-tile score-tile" style="@ScoreDisplay.HueStyle(Model.SharedScore)">
+                    <span>Shared score</span>
+                    <strong>@(Model.SharedScore?.ToString("0.0") ?? "-")</strong>
+                </div>
             </div>
             @foreach (var score in Model.Scores)
             {
-                <div class="rating-tile">
-                    <span>@score.ScoreLabel</span>
-                    <strong>@(score.Score?.ToString() ?? "-")</strong>
+                <div class="rating-column">
+                    <div class="rating-tile score-tile" style="@ScoreDisplay.HueStyle(score.Score)">
+                        <span>@score.ScoreLabel</span>
+                        <strong>@(score.Score?.ToString() ?? "-")</strong>
+                    </div>
+                    <article class="rating-note-card">
+                        <h2>@score.DisplayName</h2>
+                        <p>
+                            <strong>Favorite moment</strong><br />
+                            @score.FavoriteMoment
+                        </p>
+                        <p>
+                            <strong>Notes</strong><br />
+                            @score.Notes
+                        </p>
+                    </article>
                 </div>
             }
         </section>
 
-        @if (!string.IsNullOrWhiteSpace(Model.Game.Tags) || Model.Scores.Any(score => !string.IsNullOrWhiteSpace(score.FavoriteMoment) || !string.IsNullOrWhiteSpace(score.Notes)))
+        @if (!string.IsNullOrWhiteSpace(Model.Game.Tags))
         {
             <section class="notes-band">
-                @if (!string.IsNullOrWhiteSpace(Model.Game.Tags))
-                {
-                    <p><strong>Tags</strong><br />@Model.Game.Tags</p>
-                }
-                @foreach (var score in Model.Scores)
-                {
-                    @if (!string.IsNullOrWhiteSpace(score.FavoriteMoment))
-                    {
-                        <p><strong>@score.DisplayName favorite moment</strong><br />@score.FavoriteMoment</p>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(score.Notes))
-                    {
-                        <p><strong>@score.DisplayName notes</strong><br />@score.Notes</p>
-                    }
-                }
+                <p><strong>Tags</strong><br />@Model.Game.Tags</p>
             </section>
         }
 
