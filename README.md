@@ -8,7 +8,7 @@ A private Razor Pages app for logging and rating games played together.
 - EF Core with SQLite locally and SQL Server support for MonsterASP.NET
 - ASP.NET Core Identity with two seeded accounts
 - Game library with search, status filter, and sorting
-- Steam metadata lookup before manual entry
+- Steam metadata lookup plus optional RAWG lookup before manual entry
 - Add/edit metadata, detail, and delete game pages
 - Cover image and horizontal title image fields
 - Dedicated rating page with separate Lebubu/Labubu scores plus shared average
@@ -54,6 +54,7 @@ DatabaseProvider=SqlServer
 ConnectionStrings__LabubuLog=<MonsterASP MSSQL connection string>
 SeedUsers__LebubuPassword=<strong password>
 SeedUsers__LabubuPassword=<strong password>
+GameMetadata__RawgApiKey=<RAWG API key>
 ```
 
 The first production start creates the SQL Server schema automatically, then seeds the two private users with the passwords above. Keep these values out of source control.
@@ -79,4 +80,11 @@ You can also publish from Visual Studio by importing the MonsterASP.NET WebDeplo
 
 Enable Let's Encrypt for the MonsterASP.NET domain in `Domains/HTTPS`. On the free plan, renew the certificate manually every 90 days.
 
-The current metadata lookup uses Steam as a no-key MVP provider. For broader console and non-Steam coverage, add a second provider such as RAWG behind `IGameMetadataProvider` and configure its API key through environment variables.
+The metadata lookup uses Steam without a key and RAWG when `GameMetadata__RawgApiKey` is configured. If the RAWG key is missing, lookup falls back to Steam-only results.
+
+For local RAWG lookup, keep the key out of source control:
+
+```powershell
+dotnet user-secrets init
+dotnet user-secrets set "GameMetadata:RawgApiKey" "<RAWG API key>"
+```

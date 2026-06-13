@@ -6,6 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+}
+
 // Add services to the container.
 var databaseProvider = ResolveDatabaseProvider(builder.Configuration);
 var connectionString = ResolveConnectionString(builder.Configuration, databaseProvider);
@@ -44,7 +49,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/Login";
 });
 builder.Services.AddScoped<IdentitySeedService>();
-builder.Services.AddHttpClient<IGameMetadataProvider, SteamGameMetadataProvider>();
+builder.Services.AddHttpClient<SteamGameMetadataProvider>();
+builder.Services.AddHttpClient<RawgGameMetadataProvider>();
+builder.Services.AddScoped<IGameMetadataProvider>(serviceProvider =>
+    new CompositeGameMetadataProvider([
+        serviceProvider.GetRequiredService<SteamGameMetadataProvider>(),
+        serviceProvider.GetRequiredService<RawgGameMetadataProvider>()
+    ]));
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/");

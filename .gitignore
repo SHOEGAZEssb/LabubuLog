@@ -11,6 +11,7 @@ Data/*.db-wal
 
 # dotenv files
 .env
+appsettings.Local.json
 
 # EF migration files are local while the project is still moving quickly.
 /Migrations
