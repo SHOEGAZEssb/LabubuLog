@@ -493,6 +493,95 @@ a:hover {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.picker-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.picker-card {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    box-shadow: var(--app-shadow);
+    display: grid;
+    gap: 18px;
+    padding: 18px;
+}
+
+.picker-card-heading {
+    align-items: start;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.picker-card-heading h2,
+.picker-copy h3,
+.picker-empty h3 {
+    font-weight: 900;
+    margin: 0;
+}
+
+.picker-card-heading h2 {
+    font-size: 1.25rem;
+}
+
+.picker-choice {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(140px, 180px) minmax(0, 1fr);
+}
+
+.picker-cover {
+    align-items: center;
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(135deg, #4b1b67, var(--app-primary), var(--app-pink));
+    border-radius: 8px;
+    color: var(--app-surface-strong);
+    display: flex;
+    font-size: 4rem;
+    font-weight: 900;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.picker-cover img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.picker-copy {
+    display: grid;
+    gap: 14px;
+}
+
+.picker-copy h3 {
+    font-size: 1.7rem;
+    line-height: 1.05;
+}
+
+.picker-copy h3 a {
+    color: var(--app-ink);
+}
+
+.picker-copy p,
+.picker-empty p {
+    color: var(--app-muted);
+    margin: 0;
+}
+
+.picker-empty {
+    align-content: center;
+    border: 1px dashed var(--app-border-strong);
+    border-radius: 8px;
+    display: grid;
+    gap: 12px;
+    min-height: 260px;
+    padding: 24px;
+}
+
 .game-card {
     background: var(--app-surface);
     border: 1px solid var(--app-border);
@@ -718,6 +807,7 @@ a:hover {
 
     .stat-grid,
     .dashboard-grid,
+    .picker-grid,
     .game-grid,
     .rating-detail-grid,
     .detail-layout {
@@ -729,7 +819,8 @@ a:hover {
     }
 
     .lookup-search,
-    .lookup-result {
+    .lookup-result,
+    .picker-choice {
         grid-template-columns: 1fr;
     }
 

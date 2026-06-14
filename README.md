@@ -11,6 +11,7 @@ A private Razor Pages app for logging and rating games played together.
 - Steam metadata lookup plus optional RAWG lookup before manual entry
 - Add/edit metadata, detail, and delete game pages
 - Cover image and horizontal title image fields
+- Play-next picker for planned and paused games
 - Dedicated rating page with separate Lebubu/Labubu scores plus shared average
 - Dashboard and stats pages
 

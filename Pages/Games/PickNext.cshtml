@@ -1,0 +1,98 @@
+@page
+@model LabubuLog.Pages.Games.PickNextModel
+@{
+    ViewData["Title"] = "Play next";
+}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Picker</p>
+        <h1>Play next</h1>
+        <p class="lead">Fresh candidates from the shelf.</p>
+    </div>
+    <div class="heading-actions">
+        <a class="btn btn-primary"
+           asp-page="PickNext"
+           asp-route-plannedSeed="@Model.NextPlannedSeed"
+           asp-route-pausedSeed="@Model.NextPausedSeed">Reroll both</a>
+        <a class="btn btn-outline-secondary" asp-page="Index">Browse library</a>
+    </div>
+</section>
+
+<section class="picker-grid" aria-label="Play next picks">
+    @foreach (var pick in Model.Picks)
+    {
+        <article class="picker-card">
+            <div class="picker-card-heading">
+                <div>
+                    <p class="eyebrow">@pick.Status</p>
+                    <h2>@pick.Title</h2>
+                </div>
+                <span class="rating-pill">@pick.TotalCount</span>
+            </div>
+
+            @if (pick.Game is null)
+            {
+                <div class="picker-empty">
+                    <h3>No @pick.Status.ToString().ToLowerInvariant() games</h3>
+                    <p>Add a game or change an existing status to fill this picker.</p>
+                    <a class="btn btn-sm btn-outline-primary" asp-page="Lookup">Add game</a>
+                </div>
+            }
+            else
+            {
+                var game = pick.Game;
+                var nextPlannedSeed = pick.Status == PlayStatus.Planned ? Model.NextPlannedSeed : Model.PlannedSeed;
+                var nextPausedSeed = pick.Status == PlayStatus.Paused ? Model.NextPausedSeed : Model.PausedSeed;
+
+                <div class="picker-choice">
+                    <a class="picker-cover" asp-page="Details" asp-route-id="@game.Id">
+                        @if (!string.IsNullOrWhiteSpace(game.CoverImageUrl))
+                        {
+                            <img src="@game.CoverImageUrl" alt="@game.Title cover" loading="lazy" />
+                        }
+                        else
+                        {
+                            <span>@game.Title[0]</span>
+                        }
+                    </a>
+                    <div class="picker-copy">
+                        <div>
+                            <h3><a asp-page="Details" asp-route-id="@game.Id">@game.Title</a></h3>
+                            <p>
+                                @game.Platform
+                                @if (!string.IsNullOrWhiteSpace(game.Genre))
+                                {
+                                    <span>/ @game.Genre</span>
+                                }
+                                @if (game.ReleaseYear.HasValue)
+                                {
+                                    <span>/ @game.ReleaseYear</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="game-meta-row">
+                            <span class="rating-pill score-pill" style="@ScoreDisplay.HueStyle(game.SharedRating)">@(game.SharedRating?.ToString("0.0") ?? "-")</span>
+                            <span>@game.CreatedAtUtc.ToString("MMM d, yyyy")</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(game.Tags))
+                        {
+                            <p class="tag-line">@game.Tags</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <a class="btn btn-sm btn-primary" asp-page="Details" asp-route-id="@game.Id">Details</a>
+                    <a class="btn btn-sm btn-outline-primary"
+                       asp-page="PickNext"
+                       asp-route-plannedSeed="@nextPlannedSeed"
+                       asp-route-pausedSeed="@nextPausedSeed">Reroll @pick.Status.ToString().ToLowerInvariant()</a>
+                    <a class="btn btn-sm btn-outline-secondary"
+                       asp-page="Index"
+                       asp-route-statusFilter="@pick.Status.ToString()">Browse @pick.Status.ToString().ToLowerInvariant()</a>
+                </div>
+            }
+        </article>
+    }
+</section>
